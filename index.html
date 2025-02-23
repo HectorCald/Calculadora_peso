@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Pesos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+        }
+
+        .calculator {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            max-width: 100%;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        @media (min-width: 768px) {
+            .calculator {
+                max-width: 800px;
+                padding: 2rem;
+            }
+            body {
+                padding: 20px;
+            }
+        }
+
+        .section {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        label {
+            color: #34495e;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #27ae60;
+            background-color: #e8f5e9;
+        }
+
+        .error {
+            color: #e74c3c;
+            background-color: #fde8e7;
+        }
+
+        .neutral {
+            color: #7f8c8d;
+            background-color: #f0f0f0;
+        }
+
+        .alert {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .calculated-values {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .calculated-item {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        @media (min-width: 768px) {
+            .calculated-item {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        .calculated-label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .calculated-value {
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .success-message {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background-color: #e8f5e9;
+            color: #27ae60;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            position: absolute;
+            right: 2rem;
+            bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .success-message {
+                position: static;
+                margin-top: 1rem;
+                text-align: right;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>Calculadora de Proceso de Café</h2>
+        
+        <div class="section">
+            <h3>Valores Calculados</h3>
+            <div class="calculated-values">
+                <div class="calculated-item">
+                    <span class="calculated-label">Peso Inicial:</span>
+                    <span class="calculated-value" id="calc-inicial">0.00 kg</span>
+                </div>
+                <div class="calculated-item">
+                    <span class="calculated-label">Peso Descolado (5-7%):</span>
+                    <span class="calculated-value" id="calc-descolado">0.00 kg</span>
+                </div>
+                <div class="calculated-item">
+                    <span class="calculated-label">Peso Deshidratado (10-15%):</span>
+                    <span class="calculated-value" id="calc-deshidratado">0.00 kg</span>
+                </div>
+                <div class="calculated-item">
+                    <span class="calculated-label">Peso Molido (0.9%):</span>
+                    <span class="calculated-value" id="calc-molido">0.00 kg</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Verificación de Valores Reales</h3>
+            <div class="input-group">
+                <label>Peso Inicial:</label>
+                <div class="input-wrapper">
+                    <input type="number" id="real-inicial" step="0.01">
+                    <span class="icon neutral" id="check-inicial">-</span>
+                </div>
+                <div class="alert" id="alert-inicial">El peso inicial es requerido</div>
+            </div>
+            <div class="input-group">
+                <label>Peso Descolado:</label>
+                <div class="input-wrapper">
+                    <input type="number" id="real-descolado" step="0.01">
+                    <span class="icon neutral" id="check-descolado">-</span>
+                </div>
+                <div class="alert" id="alert-descolado">El peso está fuera del rango esperado</div>
+            </div>
+            <div class="input-group">
+                <label>Peso Deshidratado:</label>
+                <div class="input-wrapper">
+                    <input type="number" id="real-deshidratado" step="0.01">
+                    <span class="icon neutral" id="check-deshidratado">-</span>
+                </div>
+                <div class="alert" id="alert-deshidratado">El peso está fuera del rango esperado</div>
+            </div>
+            <div class="input-group">
+                <label>Peso Molido:</label>
+                <div class="input-wrapper">
+                    <input type="number" id="real-molido" step="0.01">
+                    <span class="icon neutral" id="check-molido">-</span>
+                </div>
+                <div class="alert" id="alert-molido">El peso está fuera del rango esperado</div>
+            </div>
+        </div>
+
+        <div class="success-message" id="success-message">
+            Pesos dentro del rango
+        </div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            return Number(num).toFixed(2);
+        }
+
+        function calculateExpectedValues(initialWeight) {
+            const descolado = {
+                min: initialWeight * 0.95,
+                max: initialWeight * 0.97
+            };
+
+            const deshidratado = {
+                min: descolado.min * 0.85,
+                max: descolado.max * 0.90
+            };
+
+            const molido = {
+                min: deshidratado.min * 0.991,
+                max: deshidratado.max * 0.993
+            };
+
+            return {
+                descolado,
+                deshidratado,
+                molido
+            };
+        }
+
+        function updateIndicator(element, value, min, max, alertElement) {
+            if (!value) {
+                element.textContent = '-';
+                element.className = 'icon neutral';
+                alertElement.style.display = 'none';
+                return false;
+            }
+
+            if (value >= min && value <= max) {
+                element.textContent = '✓';
+                element.className = 'icon success';
+                alertElement.style.display = 'none';
+                return true;
+            } else {
+                element.textContent = '×';
+                element.className = 'icon error';
+                alertElement.style.display = 'block';
+                return false;
+            }
+        }
+
+        function updateCalculations() {
+            const initialWeight = parseFloat(document.getElementById('real-inicial').value) || 0;
+            const expected = calculateExpectedValues(initialWeight);
+
+            document.getElementById('calc-inicial').textContent = `${formatNumber(initialWeight)} kg`;
+            document.getElementById('calc-descolado').textContent = 
+                `${formatNumber(expected.descolado.min)} - ${formatNumber(expected.descolado.max)} kg`;
+            document.getElementById('calc-deshidratado').textContent = 
+                `${formatNumber(expected.deshidratado.min)} - ${formatNumber(expected.deshidratado.max)} kg`;
+            document.getElementById('calc-molido').textContent = 
+                `${formatNumber(expected.molido.min)} - ${formatNumber(expected.molido.max)} kg`;
+
+            const realDescolado = parseFloat(document.getElementById('real-descolado').value);
+            const realDeshidratado = parseFloat(document.getElementById('real-deshidratado').value);
+            const realMolido = parseFloat(document.getElementById('real-molido').value);
+
+            const inicialCheck = updateIndicator(
+                document.getElementById('check-inicial'),
+                initialWeight,
+                0,
+                Infinity,
+                document.getElementById('alert-inicial')
+            );
+
+            const descoladoCheck = updateIndicator(
+                document.getElementById('check-descolado'),
+                realDescolado,
+                expected.descolado.min,
+                expected.descolado.max,
+                document.getElementById('alert-descolado')
+            );
+
+            const deshidratadoCheck = updateIndicator(
+                document.getElementById('check-deshidratado'),
+                realDeshidratado,
+                expected.deshidratado.min,
+                expected.deshidratado.max,
+                document.getElementById('alert-deshidratado')
+            );
+
+            const molidoCheck = updateIndicator(
+                document.getElementById('check-molido'),
+                realMolido,
+                expected.molido.min,
+                expected.molido.max,
+                document.getElementById('alert-molido')
+            );
+
+            const successMessage = document.getElementById('success-message');
+            if (inicialCheck && descoladoCheck && deshidratadoCheck && molidoCheck) {
+                successMessage.style.display = 'flex';
+            } else {
+                successMessage.style.display = 'none';
+            }
+        }
+
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', updateCalculations);
+        });
+    </script>
+</body>
+</html>
